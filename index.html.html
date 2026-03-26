@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Employee Progress Review — Sewing Department</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════════
+       DESIGN TOKENS
+    ═══════════════════════════════════════════════ */
+    :root {
+      --navy:        #0c1f38;
+      --navy-mid:    #152d4e;
+      --navy-light:  #1e3a5f;
+      --blue:        #2563eb;
+      --blue-hover:  #1d4ed8;
+      --blue-lt:     #dbeafe;
+      --blue-ring:   rgba(37,99,235,.18);
+      --teal:        #0891b2;
+      --text:        #18273d;
+      --sub:         #3d5272;
+      --muted:       #637592;
+      --placeholder: #97afc8;
+      --bg:          #edf0f7;
+      --card:        #ffffff;
+      --border:      #d8e0ed;
+      --border-dk:   #b8c8de;
+      --danger:      #dc2626;
+      --danger-lt:   #fef2f2;
+      --success:     #15803d;
+      --success-lt:  #f0fdf4;
+      --r:           14px;
+      --r-sm:        8px;
+      --r-xs:        6px;
+      --sh:          0 1px 3px rgba(12,31,56,.08), 0 4px 20px rgba(12,31,56,.06);
+      --sh-lg:       0 8px 40px rgba(12,31,56,.14);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 0 0 80px;
+      font-size: 14.5px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .page-wrap { max-width: 780px; margin: 0 auto; padding: 0 18px; }
+
+    /* ── Header dept line (keep rule in case referenced elsewhere) ── */
+    .header-dept { display: none; }
+    @keyframes slideDown { from { opacity:0; transform:translateY(-16px) } to { opacity:1; transform:none } }
+    @keyframes slideUp   { from { opacity:0; transform:translateY(14px)  } to { opacity:1; transform:none } }
+    @keyframes pulse     { 0%,100%{opacity:1} 50%{opacity:.4} }
+    @keyframes spin      { to { transform:rotate(360deg) } }
+
+    /* ═══════════════════════════════════════════════
+       HEADER — DEEP NAVY WITH GEOMETRIC PATTERN
+    ═══════════════════════════════════════════════ */
+    .site-header {
+      background: var(--navy);
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 28px;
+      animation: slideDown .5s ease both;
+    }
+
+    /* Dot-grid watermark */
+    .site-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,.07) 1px, transparent 1px);
+      background-size: 22px 22px;
+      pointer-events: none;
+    }
+
+    /* Bottom edge accent line */
+    .site-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--blue) 0%, var(--teal) 100%);
+    }
+
+    .header-inner {
+      position: relative;
+      z-index: 1;
+      padding: 32px 28px 28px;
+    }
+
+    .header-top { display: flex; align-items: flex-start; gap: 20px; }
+
+    .header-emblem {
+      flex-shrink: 0;
+      width: 56px; height: 56px;
+      background: rgba(255,255,255,.1);
+      border: 1.5px solid rgba(255,255,255,.2);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .header-emblem svg { width: 30px; height: 30px; color: #fff; opacity: .95; }
+
+    .header-titles { flex: 1; }
+
+    .header-dept {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 10.5px; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: rgba(255,255,255,.55);
+      margin-bottom: 6px;
+    }
+    .header-dept::before {
+      content: '';
+      width: 5px; height: 5px;
+      background: var(--teal);
+      border-radius: 50%;
+      box-shadow: 0 0 6px var(--teal);
+      animation: pulse 2.5s ease infinite;
+    }
+
+    h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(20px, 4.5vw, 28px);
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.15;
+      letter-spacing: -.02em;
+      margin-bottom: 6px;
+    }
+
+    .header-subtitle {
+      font-size: 13px;
+      color: rgba(255,255,255,.58);
+      line-height: 1.55;
+      font-weight: 500;
+    }
+
+    .header-meta {
+      display: flex; gap: 0; flex-wrap: wrap;
+      margin-top: 24px;
+      border-top: 1px solid rgba(255,255,255,.1);
+      padding-top: 16px;
+      align-items: center;
+    }
+    /* Live clock chip — sits on the right of the meta strip */
+    .hm-clock {
+      margin-left: auto;
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 12.5px; font-weight: 700;
+      color: rgba(255,255,255,.9);
+      letter-spacing: .03em;
+      font-variant-numeric: tabular-nums;
+    }
+    .hm-clock-dot {
+      width: 6px; height: 6px;
+      background: #4ade80;
+      border-radius: 50%;
+      box-shadow: 0 0 6px #4ade80;
+      animation: pulse 2s ease infinite;
+      flex-shrink: 0;
+    }
+    .hm-item {
+      display: flex; align-items: center; gap: 7px;
+      padding: 0 20px 0 0;
+      font-size: 12px; font-weight: 600;
+      color: rgba(255,255,255,.6);
+    }
+    .hm-item:first-child { padding-left: 0; }
+    .hm-item svg { width: 13px; height: 13px; opacity: .75; flex-shrink: 0; }
+    .hm-item + .hm-item {
+      padding-left: 20px;
+      border-left: 1px solid rgba(255,255,255,.12);
+    }
+
+    /* ═══════════════════════════════════════════════
+       STEP PROGRESS BAR
+    ═══════════════════════════════════════════════ */
+    .steps-bar {
+      display: flex; gap: 0;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      overflow: hidden;
+      margin-bottom: 20px;
+      box-shadow: var(--sh);
+      animation: slideUp .4s .06s ease both;
+    }
+    .step {
+      flex: 1;
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 16px;
+      position: relative;
+      border-right: 1px solid var(--border);
+    }
+    .step:last-child { border-right: none; }
+    .step-num {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+      flex-shrink: 0;
+      background: var(--border);
+      color: var(--muted);
+      transition: background .2s, color .2s;
+    }
+    .step.done .step-num  { background: var(--blue-lt); color: var(--blue); }
+    .step.active .step-num{ background: var(--blue);    color: #fff;        }
+    .step-label { font-size: 12px; font-weight: 600; color: var(--muted); line-height: 1.2; }
+    .step-label span { display: block; font-size: 10.5px; font-weight: 500; color: var(--placeholder); }
+    .step.active .step-label { color: var(--text); }
+    .step.done  .step-label  { color: var(--sub);  }
+
+    @media(max-width:520px){
+      .step-label span { display: none; }
+      .step { padding: 12px 10px; gap: 8px; }
+      .step-label { font-size: 11px; }
+    }
+
+    /* ═══════════════════════════════════════════════
+       REQUIRED NOTE
+    ═══════════════════════════════════════════════ */
+    .req-note {
+      font-size: 12px; color: var(--muted);
+      margin-bottom: 14px; padding: 0 2px;
+      font-weight: 500;
+    }
+    .req-note span { color: var(--danger); }
+
+    /* ═══════════════════════════════════════════════
+       CARDS
+    ═══════════════════════════════════════════════ */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      margin-bottom: 16px;
+      box-shadow: var(--sh);
+      overflow: hidden;
+      animation: slideUp .4s ease both;
+    }
+    .card:nth-child(3){ animation-delay:.06s }
+    .card:nth-child(4){ animation-delay:.12s }
+    .card:nth-child(5){ animation-delay:.18s }
+
+    .card-head {
+      padding: 0 24px;
+      height: 52px;
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid var(--border);
+      background: #fbfcfe;
+    }
+    .card-head-accent {
+      width: 4px; height: 20px;
+      background: var(--blue);
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .card-head-icon {
+      width: 30px; height: 30px;
+      background: var(--blue-lt);
+      border-radius: var(--r-xs);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .card-head-icon svg { width: 15px; height: 15px; color: var(--blue); }
+    .card-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: .07em; text-transform: uppercase;
+      color: var(--sub);
+    }
+    .card-body { padding: 26px 24px; }
+
+    /* ═══════════════════════════════════════════════
+       FORM FIELDS
+    ═══════════════════════════════════════════════ */
+    .field { margin-bottom: 18px; }
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 13px; font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    label .req { color: var(--danger); margin-left: 2px; font-weight: 700; }
+    label .hint {
+      display: block;
+      font-weight: 500; font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea, select {
+      width: 100%;
+      background: #fff;
+      border: 1.5px solid var(--border-dk);
+      border-radius: var(--r-sm);
+      padding: 11px 14px;
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      font-size: 14.5px;
+      font-weight: 500;
+      outline: none;
+      transition: border-color .15s, box-shadow .15s, background .15s;
+      -webkit-appearance: none;
+    }
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    textarea:focus, select:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3.5px var(--blue-ring);
+      background: #fafcff;
+    }
+    input::placeholder, textarea::placeholder { color: var(--placeholder); font-weight: 400; }
+    input.invalid, select.invalid {
+      border-color: var(--danger) !important;
+      background: var(--danger-lt);
+    }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media(max-width:540px){ .grid-2 { grid-template-columns: 1fr; } }
+
+    .field-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 6px 0 20px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       PHOTO UPLOAD ZONE
+    ═══════════════════════════════════════════════ */
+    .photo-zone {
+      width: 100%;
+      min-height: 180px;
+      border-radius: var(--r-sm);
+      border: 2px dashed var(--border-dk);
+      background: #f7f9fc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 14px;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .photo-zone:hover { border-color: var(--blue); background: #f0f5ff; }
+    .photo-zone.has-photo {
+      border-style: solid;
+      border-color: var(--blue);
+      background: transparent;
+    }
+    .photo-zone img#photo-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: none;
+      border-radius: calc(var(--r-sm) - 2px);
+    }
+    .photo-zone-content {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 10px;
+      position: relative; z-index: 1;
+      padding: 20px;
+      text-align: center;
+    }
+    .photo-icon-wrap {
+      width: 54px; height: 54px;
+      background: var(--blue-lt);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .photo-icon-wrap svg { width: 26px; height: 26px; color: var(--blue); }
+    .photo-zone-title {
+      font-size: 14px; font-weight: 700; color: var(--sub);
+    }
+    .photo-zone-sub {
+      font-size: 12px; color: var(--muted); font-weight: 500;
+    }
+    .photo-zone-btns { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+    /* Photo overlay strip (visible when photo is set) */
+    .photo-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 12px 16px;
+      background: linear-gradient(0deg, rgba(12,31,56,.85) 0%, transparent 100%);
+      display: none;
+      align-items: center; justify-content: space-between; gap: 10px;
+      z-index: 2;
+    }
+    .photo-zone.has-photo .photo-overlay { display: flex; }
+    .photo-zone.has-photo .photo-zone-content { display: none; }
+    .photo-overlay-label {
+      font-size: 12.5px; font-weight: 600; color: rgba(255,255,255,.9);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .photo-overlay-label::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      box-shadow: 0 0 6px #4ade80;
+    }
+    .photo-overlay-btns { display: flex; gap: 8px; }
+
+    /* Button styles */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 18px;
+      background: var(--blue); color: #fff;
+      border: none; border-radius: var(--r-xs);
+      font-size: 13px; font-weight: 700;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer; transition: background .15s, box-shadow .15s;
+      white-space: nowrap;
+    }
+    .btn-primary:hover { background: var(--blue-hover); box-shadow: 0 3px 12px rgba(37,99,235,.4); }
+    .btn-primary svg { width: 14px; height: 14px; }
+
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 16px;
+      background: #fff; color: var(--sub);
+      border: 1.5px solid var(--border-dk); border-radius: var(--r-xs);
+      font-size: 13px; font-weight: 700;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer; transition: border-color .15s, color .15s;
+    }
+    .btn-outline:hover { border-color: var(--blue); color: var(--blue); }
+    .btn-outline svg { width: 14px; height: 14px; }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 6px 12px;
+      background: rgba(255,255,255,.15); color: rgba(255,255,255,.9);
+      border: 1px solid rgba(255,255,255,.25); border-radius: var(--r-xs);
+      font-size: 12px; font-weight: 700;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer; transition: background .15s;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,.25); }
+    .btn-ghost svg { width: 13px; height: 13px; }
+
+    /* ═══════════════════════════════════════════════
+       RATING SYSTEM — HORIZONTAL ROWS
+    ═══════════════════════════════════════════════ */
+    .rating-guide {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 600; color: var(--muted);
+      padding: 10px 14px;
+      background: #f7f9fc;
+      border: 1px solid var(--border);
+      border-radius: var(--r-xs);
+      margin-bottom: 18px;
+      flex-wrap: wrap; gap: 6px;
+    }
+    .rg-pip {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-size: 11.5px; font-weight: 700;
+    }
+    .rg-pip.r1 { background: #fef2f2; color: #dc2626; }
+    .rg-pip.r3 { background: #fffbeb; color: #b45309; }
+    .rg-pip.r5 { background: #f0fdf4; color: #15803d; }
+
+    .rating-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 18px;
+      background: #f8fafd;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      margin-bottom: 10px;
+      transition: border-color .15s, background .15s;
+    }
+    .rating-item:last-of-type { margin-bottom: 0; }
+    .rating-item.invalid { border-color: var(--danger) !important; background: var(--danger-lt); }
+    .rating-item:focus-within { border-color: #93c5fd; background: #f0f6ff; }
+
+    .rq-text {
+      flex: 1;
+      min-width: 0;
+    }
+    .rq-si {
+      font-size: 13.5px; font-weight: 700; color: var(--text);
+      line-height: 1.45;
+    }
+    .rq-en {
+      font-size: 12px; font-weight: 500; color: var(--muted);
+      margin-top: 2px;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .req { color: var(--danger); font-weight: 700; margin-left: 1px; }
+
+    .rating-buttons {
+      display: flex; gap: 6px; flex-shrink: 0;
+    }
+    .rating-buttons input[type="radio"] { display: none; }
+    .rating-buttons label {
+      margin: 0;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 3px;
+      cursor: pointer;
+    }
+    .rb {
+      width: 44px; height: 44px;
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 800;
+      border: 1.5px solid var(--border-dk);
+      background: #fff; color: var(--muted);
+      transition: all .13s ease;
+      user-select: none;
+      font-family: 'Sora', sans-serif;
+    }
+    .rating-buttons label:hover .rb {
+      border-color: var(--blue);
+      background: var(--blue-lt);
+      color: var(--blue);
+      transform: translateY(-2px);
+    }
+    /* Color-coded selected states */
+    .rating-buttons input[value="1"]:checked + label .rb { background:#dc2626; border-color:#dc2626; color:#fff; box-shadow:0 3px 10px #dc262640; transform:translateY(-2px); }
+    .rating-buttons input[value="2"]:checked + label .rb { background:#ea580c; border-color:#ea580c; color:#fff; box-shadow:0 3px 10px #ea580c40; transform:translateY(-2px); }
+    .rating-buttons input[value="3"]:checked + label .rb { background:#d97706; border-color:#d97706; color:#fff; box-shadow:0 3px 10px #d9770640; transform:translateY(-2px); }
+    .rating-buttons input[value="4"]:checked + label .rb { background:#16a34a; border-color:#16a34a; color:#fff; box-shadow:0 3px 10px #16a34a40; transform:translateY(-2px); }
+    .rating-buttons input[value="5"]:checked + label .rb { background:#15803d; border-color:#15803d; color:#fff; box-shadow:0 3px 12px #15803d50; transform:translateY(-2px); }
+
+    .rl {
+      font-size: 9px; font-weight: 700;
+      color: var(--muted); text-align: center;
+      max-width: 44px; line-height: 1.2;
+      text-transform: uppercase; letter-spacing: .04em;
+    }
+
+    @media(max-width:560px){
+      .rating-item { flex-direction: column; align-items: flex-start; }
+      .rq-en { -webkit-line-clamp: unset; overflow: visible; }
+      .rating-buttons { gap: 5px; }
+      .rb { width: 40px; height: 40px; font-size: 14px; }
+    }
+
+    /* ═══════════════════════════════════════════════
+       ERROR MESSAGES
+    ═══════════════════════════════════════════════ */
+    .field-error {
+      font-size: 12px; font-weight: 600;
+      color: var(--danger);
+      margin-top: 4px;
+      display: none;
+      align-items: center; gap: 4px;
+    }
+    .field-error::before {
+      content: '⚠';
+      font-size: 11px;
+    }
+    .ri-error {
+      font-size: 12px; font-weight: 600;
+      color: var(--danger);
+      margin-top: 6px;
+      display: none;
+    }
+
+    /* ═══════════════════════════════════════════════
+       SUBMIT SECTION
+    ═══════════════════════════════════════════════ */
+    .submit-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 22px 24px;
+      box-shadow: var(--sh);
+      display: flex; align-items: center;
+      gap: 20px; flex-wrap: wrap;
+      animation: slideUp .4s .22s ease both;
+    }
+    .submit-info { flex: 1; min-width: 180px; }
+    .submit-info strong {
+      display: block;
+      font-family: 'Sora', sans-serif;
+      font-size: 14px; font-weight: 700;
+      color: var(--text); margin-bottom: 3px;
+    }
+    .submit-info p { font-size: 12px; color: var(--muted); font-weight: 500; line-height: 1.5; }
+
+    .btn-submit {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 13px 32px;
+      background: linear-gradient(135deg, var(--blue) 0%, #1e40af 100%);
+      color: #fff;
+      border: none; border-radius: var(--r-sm);
+      font-size: 15px; font-weight: 800;
+      font-family: 'Sora', sans-serif;
+      cursor: pointer; letter-spacing: .01em;
+      transition: opacity .15s, transform .12s, box-shadow .15s;
+      box-shadow: 0 4px 18px rgba(37,99,235,.45);
+      white-space: nowrap;
+    }
+    .btn-submit:hover { opacity:.92; transform:translateY(-2px); box-shadow:0 8px 28px rgba(37,99,235,.5); }
+    .btn-submit:active { transform:translateY(0); }
+    .btn-submit svg { width: 17px; height: 17px; }
+
+    /* ═══════════════════════════════════════════════
+       SUCCESS BANNER
+    ═══════════════════════════════════════════════ */
+    /* ═══════════════════════════════════════════════
+       THANK-YOU SCREEN
+    ═══════════════════════════════════════════════ */
+    #success-banner {
+      display: none;
+      text-align: center;
+      padding: 0;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Full-screen overlay feel */
+    .ty-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 56px 32px 48px;
+      box-shadow: var(--sh-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Confetti burst canvas */
+    #confetti-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .ty-content { position: relative; z-index: 1; }
+
+    /* Animated check ring */
+    .ty-ring {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      border: 3px solid #86efac;
+      background: #f0fdf4;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 24px;
+      position: relative;
+    }
+    .ty-ring::before {
+      content: '';
+      position: absolute; inset: -8px;
+      border-radius: 50%;
+      border: 2px solid #bbf7d0;
+      animation: ringPulse 2s ease-out infinite;
+    }
+    @keyframes ringPulse {
+      0%   { transform: scale(1);   opacity: .7; }
+      100% { transform: scale(1.35); opacity: 0; }
+    }
+
+    .ty-check {
+      animation: checkPop .5s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes checkPop {
+      0%   { transform: scale(0) rotate(-20deg); opacity: 0; }
+      100% { transform: scale(1) rotate(0);      opacity: 1; }
+    }
+
+    .ty-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #dbeafe; color: #1d4ed8;
+      font-size: 11px; font-weight: 800;
+      letter-spacing: .1em; text-transform: uppercase;
+      padding: 4px 14px; border-radius: 20px;
+      margin-bottom: 18px;
+      animation: slideUp .4s .1s ease both;
+    }
+
+    #success-banner h2 {
+      font-family: 'Sora', sans-serif;
+      font-size: clamp(22px, 5vw, 30px);
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: 10px;
+      animation: slideUp .4s .15s ease both;
+    }
+    #success-banner h2 span { color: var(--blue); }
+
+    .ty-sub {
+      font-size: 15px; font-weight: 500;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 420px; margin: 0 auto 32px;
+      animation: slideUp .4s .2s ease both;
+    }
+
+    /* Stats row */
+    .ty-stats {
+      display: flex; gap: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--r-sm);
+      overflow: hidden;
+      margin-bottom: 32px;
+      animation: slideUp .4s .25s ease both;
+    }
+    .ty-stat {
+      flex: 1;
+      padding: 16px 12px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .ty-stat:last-child { border-right: none; }
+    .ty-stat-val {
+      font-family: 'Sora', sans-serif;
+      font-size: 22px; font-weight: 800;
+      color: var(--blue);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .ty-stat-lbl {
+      font-size: 11px; font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase; letter-spacing: .07em;
+    }
+
+    /* Supervisor message */
+    .ty-message {
+      background: linear-gradient(135deg, #f0f7ff 0%, #e8f4ff 100%);
+      border: 1px solid #bfdbfe;
+      border-radius: var(--r-sm);
+      padding: 20px 22px;
+      margin-bottom: 28px;
+      text-align: left;
+      animation: slideUp .4s .3s ease both;
+    }
+    .ty-message-head {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; font-weight: 700;
+      color: var(--blue);
+      text-transform: uppercase; letter-spacing: .08em;
+      margin-bottom: 8px;
+    }
+    .ty-message-head svg { width: 14px; height: 14px; }
+    .ty-message p {
+      font-size: 14px; font-weight: 500;
+      color: var(--sub); line-height: 1.7;
+    }
+
+    /* Action buttons */
+    .ty-actions {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      animation: slideUp .4s .35s ease both;
+    }
+    .ty-btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, var(--blue) 0%, #1e40af 100%);
+      color: #fff; border: none; border-radius: var(--r-sm);
+      font-size: 14px; font-weight: 800;
+      font-family: 'Sora', sans-serif;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(37,99,235,.4);
+      transition: opacity .15s, transform .12s;
+    }
+    .ty-btn-primary:hover { opacity: .9; transform: translateY(-1px); }
+    .ty-btn-primary svg { width: 15px; height: 15px; }
+
+    .ty-timestamp {
+      margin-top: 24px;
+      font-size: 11.5px; font-weight: 500;
+      color: var(--placeholder);
+      animation: slideUp .4s .4s ease both;
+    }
+    .ty-timestamp strong { color: var(--muted); }
+
+    /* ── EPF Autofill & Suggestions ── */
+    .epf-wrap { position: relative; }
+    .epf-suggestions {
+      position: absolute;
+      top: calc(100% + 4px); left: 0; right: 0;
+      background: #fff;
+      border: 1.5px solid var(--blue);
+      border-radius: var(--r-sm);
+      box-shadow: 0 8px 24px rgba(12,31,56,.14);
+      z-index: 50;
+      overflow: hidden;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .epf-suggestion-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 10px;
+      transition: background .1s;
+      border-bottom: 1px solid var(--border);
+    }
+    .epf-suggestion-item:last-child { border-bottom: none; }
+    .epf-suggestion-item:hover, .epf-suggestion-item.active { background: var(--blue-lt); }
+    .epf-sug-epf {
+      font-size: 12px; font-weight: 800;
+      color: var(--blue); min-width: 52px;
+      font-variant-numeric: tabular-nums;
+    }
+    .epf-sug-name {
+      font-size: 13px; font-weight: 600; color: var(--text);
+      flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .epf-sug-line {
+      font-size: 11px; font-weight: 500; color: var(--muted);
+    }
+    /* Autofilled / readonly field style */
+    input.autofilled {
+      background: #f0f7ff !important;
+      border-color: #93c5fd !important;
+      color: var(--sub) !important;
+      cursor: not-allowed;
+    }
+    .autofill-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 10.5px; font-weight: 700;
+      color: #1d4ed8; background: #dbeafe;
+      padding: 2px 8px; border-radius: 10px;
+      margin-left: 6px; vertical-align: middle;
+      letter-spacing: .04em;
+    }
+    .autofill-badge svg { width: 10px; height: 10px; }
+    /* EPF not-found warning */
+    .epf-notfound {
+      font-size: 12px; font-weight: 600;
+      color: #b45309; background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: var(--r-xs);
+      padding: 7px 12px;
+      margin-top: 6px;
+      display: none;
+    }
+
+    /* ── Camera Modal (canvas override) ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(12,31,56,.65);
+      z-index: 200;
+      align-items: center; justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(6px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 18px;
+      padding: 28px;
+      width: 100%; max-width: 460px;
+      text-align: center;
+      box-shadow: 0 30px 80px rgba(12,31,56,.35);
+      animation: slideUp .3s ease both;
+    }
+    .modal-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px; font-weight: 800;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+    video {
+      width: 100%; border-radius: 10px;
+      background: #0c1f38;
+      display: block; margin-bottom: 16px;
+    }
+    canvas { display: none; }
+    .modal-btns { display: flex; gap: 10px; justify-content: center; }
+
+    .btn-snap {
+      padding: 11px 26px;
+      background: linear-gradient(135deg, var(--blue) 0%, #1e40af 100%);
+      color: #fff; border: none; border-radius: var(--r-xs);
+      font-size: 14px; font-weight: 800;
+      font-family: 'Sora', sans-serif;
+      cursor: pointer; transition: opacity .15s;
+      box-shadow: 0 4px 14px rgba(37,99,235,.4);
+    }
+    .btn-snap:hover { opacity:.9; }
+    .btn-modal-cancel {
+      padding: 11px 20px;
+      background: #fff; color: var(--sub);
+      border: 1.5px solid var(--border-dk);
+      border-radius: var(--r-xs);
+      font-size: 14px; font-weight: 700;
+      font-family: 'Nunito', sans-serif;
+      cursor: pointer; transition: border-color .15s, color .15s;
+    }
+    .btn-modal-cancel:hover { border-color: var(--danger); color: var(--danger); }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════
+       HEADER
+  ══════════════════════════════════════════════════ -->
+  <div class="site-header">
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="header-emblem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div class="header-titles">
+          <h1>Employee Progress Review</h1>
+          <p class="header-subtitle">
+            සේවක ප්‍රගති සමාලෝචනය — මැහුම් අංශය (මාස 3ට අඩු)<br>
+            Sewing Department · First 3-Month Probation Evaluation
+          </p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <div class="hm-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span id="hdr-date">—</span>
+        </div>
+        <div class="hm-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Sewing Department</span>
+        </div>
+        <div class="hm-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          <span>Performance Review</span>
+        </div>
+        <div class="hm-clock">
+          <div class="hm-clock-dot"></div>
+          <span id="hdr-time">00:00:00</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+
+    <!-- Progress Steps -->
+    <div class="steps-bar">
+      <div class="step done">
+        <div class="step-num">
+          <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2 6 5 9 10 3"/></svg>
+        </div>
+        <div class="step-label">Employee Info<span>Name, Team, EPF</span></div>
+      </div>
+      <div class="step active">
+        <div class="step-num">2</div>
+        <div class="step-label">Photo<span>Optional</span></div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-label">Performance<span>5 Rating Areas</span></div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-label">Submit<span>Save to Records</span></div>
+      </div>
+    </div>
+
+    <p class="req-note"><span>*</span> All fields are required unless marked optional</p>
+
+    <!-- ══ THANK-YOU SCREEN ══ -->
+    <div id="success-banner">
+      <div class="ty-card">
+        <canvas id="confetti-canvas"></canvas>
+        <div class="ty-content">
+
+          <div class="ty-ring">
+            <svg class="ty-check" viewBox="0 0 24 24" fill="none" stroke="#15803d"
+                 stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"
+                 width="38" height="38">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+
+          <div class="ty-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                 stroke-linecap="round" width="11" height="11">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Review Saved
+          </div>
+
+          <h2>Thank You, <span>Supervisor!</span></h2>
+
+          <p class="ty-sub">
+            The employee progress review has been submitted successfully and<br>
+            saved to the HR records system.
+          </p>
+
+          <div class="ty-stats">
+            <div class="ty-stat">
+              <div class="ty-stat-val" id="ty-stat-name">—</div>
+              <div class="ty-stat-lbl">Employee</div>
+            </div>
+            <div class="ty-stat">
+              <div class="ty-stat-val" id="ty-stat-score">—</div>
+              <div class="ty-stat-lbl">Avg. Score</div>
+            </div>
+            <div class="ty-stat">
+              <div class="ty-stat-val">5</div>
+              <div class="ty-stat-lbl">Areas Rated</div>
+            </div>
+          </div>
+
+          <div class="ty-message">
+            <div class="ty-message-head">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                   stroke-linecap="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              Note to Supervisor
+            </div>
+            <p>
+              Your evaluation plays a vital role in the growth of our team members.
+              Thank you for taking the time to provide an accurate and fair assessment.
+              This data will be used to support employee development and HR decisions.
+            </p>
+          </div>
+
+          <div class="ty-actions">
+            <button type="button" class="ty-btn-primary" onclick="resetForm()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="1 4 1 10 7 10"/>
+                <path d="M3.51 15a9 9 0 1 0 .49-5.09"/>
+              </svg>
+              Start New Review
+            </button>
+          </div>
+
+          <div class="ty-timestamp">
+            Submitted on <strong id="ty-timestamp">—</strong>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         CARD 1: EMPLOYEE INFORMATION
+    ══════════════════════════════════════════════ -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-accent"></div>
+        <div class="card-head-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <span class="card-title">Employee Information · සේවක තොරතුරු</span>
+      </div>
+      <div class="card-body">
+
+        <!-- EPF first — drives autofill of all other fields -->
+        <div class="field" style="max-width:320px;">
+          <label for="epf_number">
+            EPF Number <span class="req">*</span>
+            <span class="hint">Type to search — other fields auto-fill from records</span>
+          </label>
+          <div class="epf-wrap">
+            <input type="text" id="epf_number" name="epf_number"
+                   placeholder="e.g. 23372" autocomplete="off"
+                   oninput="onEpfInput(this.value)"
+                   onkeydown="onEpfKeydown(event)"/>
+            <div class="epf-suggestions" id="epf-suggestions" style="display:none"></div>
+          </div>
+          <div class="field-error" id="err_epf_number">Please enter a valid EPF number from the list.</div>
+          <div class="epf-notfound" id="epf-notfound">⚠ EPF not found in records. Please verify the number.</div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="emp_name">
+              සේවකයාගේ නම <span class="req">*</span>
+              <span class="autofill-badge" id="badge-name" style="display:none">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Auto-filled
+              </span>
+              <span class="hint">Employee Full Name</span>
+            </label>
+            <input type="text" id="emp_name" name="emp_name"
+                   placeholder="Auto-filled from EPF" autocomplete="off" readonly/>
+            <div class="field-error" id="err_emp_name">This field is required.</div>
+          </div>
+          <div class="field">
+            <label for="emp_team">
+              සේවකයා අයත් Line <span class="req">*</span>
+              <span class="autofill-badge" id="badge-team" style="display:none">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Auto-filled
+              </span>
+              <span class="hint">Employee Line / Group</span>
+            </label>
+            <input type="text" id="emp_team" name="emp_team"
+                   placeholder="Auto-filled from EPF" autocomplete="off" readonly/>
+            <div class="field-error" id="err_emp_team">This field is required.</div>
+          </div>
+          <div class="field">
+            <label for="emp_skill">
+              නිපුණතාවය
+              <span class="autofill-badge" id="badge-skill" style="display:none">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Auto-filled
+              </span>
+              <span class="hint">Skill (Grade)</span>
+            </label>
+            <input type="text" id="emp_skill" name="emp_skill"
+                   placeholder="Auto-filled from EPF" autocomplete="off" readonly/>
+          </div>
+          <div class="field">
+            <label for="emp_appdate">
+              පත්කිරීම් දිනය
+              <span class="autofill-badge" id="badge-appdate" style="display:none">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Auto-filled
+              </span>
+              <span class="hint">Appointment Date</span>
+            </label>
+            <input type="text" id="emp_appdate" name="emp_appdate"
+                   placeholder="Auto-filled from EPF" autocomplete="off" readonly/>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         CARD 2: EMPLOYEE PHOTO
+    ══════════════════════════════════════════════ -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-accent"></div>
+        <div class="card-head-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <span class="card-title">Employee Photo · සේවකයාගේ ඡායාරූපය</span>
+      </div>
+      <div class="card-body">
+        <div class="field">
+          <label>
+            සේවකයාගේ ඡායාරූපය <span style="font-size:11px;font-weight:500;color:var(--muted);">(Optional)</span>
+            <span class="hint">Employee Photo — Take a live photo or upload from device</span>
+          </label>
+
+          <div class="photo-zone" id="photo-zone">
+
+            <!-- Default state -->
+            <div class="photo-zone-content" id="photo-zone-content">
+              <div class="photo-icon-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                  <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                </svg>
+              </div>
+              <div>
+                <div class="photo-zone-title">සේවකයාගේ ඡායාරූපය ලබාගන්න</div>
+                <div class="photo-zone-sub">Take a live photo using camera or upload an image</div>
+              </div>
+              <div class="photo-zone-btns">
+                <button type="button" class="btn-primary" onclick="openCamera()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  ඡායාරූප ගන්න · Take Photo
+                </button>
+                <label class="btn-outline" style="cursor:pointer;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Upload Image
+                  <input type="file" id="photo-upload" accept="image/*" style="display:none" onchange="handleUpload(event)"/>
+                </label>
+              </div>
+            </div>
+
+            <!-- Photo preview -->
+            <img id="photo-img" alt="Employee Photo"/>
+
+            <!-- Overlay (shown when photo set) -->
+            <div class="photo-overlay">
+              <div class="photo-overlay-label">Photo captured</div>
+              <div class="photo-overlay-btns">
+                <button type="button" class="btn-ghost" onclick="openCamera()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  Retake
+                </button>
+                <label class="btn-ghost" style="cursor:pointer;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Change
+                  <input type="file" id="photo-change" accept="image/*" style="display:none" onchange="handleUpload(event)"/>
+                </label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════
+         CARD 3: PERFORMANCE RATINGS
+    ══════════════════════════════════════════════ -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-head-accent"></div>
+        <div class="card-head-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+        </div>
+        <span class="card-title">Performance Ratings · කාර්ය සාධන ශ්‍රේණිගත කිරීම</span>
+      </div>
+      <div class="card-body">
+
+        <div class="rating-guide">
+          <span>Rating scale:</span>
+          <span class="rg-pip r1">1 — Very Poor</span>
+          <span class="rg-pip r3">3 — Average</span>
+          <span class="rg-pip r5">5 — Excellent</span>
+        </div>
+
+        <!-- Q1 -->
+        <div class="rating-item" id="ri_1">
+          <div class="rq-text">
+            <div class="rq-si">පවරා ඇති මැහුම් කටයුතු ප්‍රමිතියට සිදු කිරීමට ඇති හැකියාව <span class="req">*</span></div>
+            <div class="rq-en">Ability to perform assigned Sewing Operations to the required standard</div>
+          </div>
+          <div class="rating-buttons">
+            <input type="radio" name="rating_sewing" id="r1_1" value="1"><label for="r1_1"><div class="rb">1</div><div class="rl">Very Poor</div></label>
+            <input type="radio" name="rating_sewing" id="r1_2" value="2"><label for="r1_2"><div class="rb">2</div><div class="rl">Poor</div></label>
+            <input type="radio" name="rating_sewing" id="r1_3" value="3"><label for="r1_3"><div class="rb">3</div><div class="rl">Average</div></label>
+            <input type="radio" name="rating_sewing" id="r1_4" value="4"><label for="r1_4"><div class="rb">4</div><div class="rl">Good</div></label>
+            <input type="radio" name="rating_sewing" id="r1_5" value="5"><label for="r1_5"><div class="rb">5</div><div class="rl">Excellent</div></label>
+          </div>
+          <div class="ri-error" id="err_rating_sewing">⚠ Please select a rating.</div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="rating-item" id="ri_2">
+          <div class="rq-text">
+            <div class="rq-si">ආයතනය ලබාදෙන පැයක ඉලක්ක (Hourly Targets) සපුරාලීමට ඇති හැකියාව <span class="req">*</span></div>
+            <div class="rq-en">Ability to meet the company's set Hourly Targets</div>
+          </div>
+          <div class="rating-buttons">
+            <input type="radio" name="rating_targets" id="r2_1" value="1"><label for="r2_1"><div class="rb">1</div><div class="rl">Very Poor</div></label>
+            <input type="radio" name="rating_targets" id="r2_2" value="2"><label for="r2_2"><div class="rb">2</div><div class="rl">Poor</div></label>
+            <input type="radio" name="rating_targets" id="r2_3" value="3"><label for="r2_3"><div class="rb">3</div><div class="rl">Average</div></label>
+            <input type="radio" name="rating_targets" id="r2_4" value="4"><label for="r2_4"><div class="rb">4</div><div class="rl">Good</div></label>
+            <input type="radio" name="rating_targets" id="r2_5" value="5"><label for="r2_5"><div class="rb">5</div><div class="rl">Excellent</div></label>
+          </div>
+          <div class="ri-error" id="err_rating_targets">⚠ Please select a rating.</div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="rating-item" id="ri_3">
+          <div class="rq-text">
+            <div class="rq-si">දෝෂ (Defects/Rework) අවම කරගනිමින් ගුණාත්මකභාවය රැකගැනීමට ඇති හැකියාව <span class="req">*</span></div>
+            <div class="rq-en">Ability to maintain quality by minimizing Defects and Rework</div>
+          </div>
+          <div class="rating-buttons">
+            <input type="radio" name="rating_quality" id="r3_1" value="1"><label for="r3_1"><div class="rb">1</div><div class="rl">Very Poor</div></label>
+            <input type="radio" name="rating_quality" id="r3_2" value="2"><label for="r3_2"><div class="rb">2</div><div class="rl">Poor</div></label>
+            <input type="radio" name="rating_quality" id="r3_3" value="3"><label for="r3_3"><div class="rb">3</div><div class="rl">Average</div></label>
+            <input type="radio" name="rating_quality" id="r3_4" value="4"><label for="r3_4"><div class="rb">4</div><div class="rl">Good</div></label>
+            <input type="radio" name="rating_quality" id="r3_5" value="5"><label for="r3_5"><div class="rb">5</div><div class="rl">Excellent</div></label>
+          </div>
+          <div class="ri-error" id="err_rating_quality">⚠ Please select a rating.</div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="rating-item" id="ri_4">
+          <div class="rq-text">
+            <div class="rq-si">සේවයට පැමිණීම, වේලාවට වැඩ ඇරඹීම සහ ආයතනික නීති රීති පිළිපැදීම <span class="req">*</span></div>
+            <div class="rq-en">Attendance, punctuality, and adherence to company rules and regulations</div>
+          </div>
+          <div class="rating-buttons">
+            <input type="radio" name="rating_attendance" id="r4_1" value="1"><label for="r4_1"><div class="rb">1</div><div class="rl">Very Poor</div></label>
+            <input type="radio" name="rating_attendance" id="r4_2" value="2"><label for="r4_2"><div class="rb">2</div><div class="rl">Poor</div></label>
+            <input type="radio" name="rating_attendance" id="r4_3" value="3"><label for="r4_3"><div class="rb">3</div><div class="rl">Average</div></label>
+            <input type="radio" name="rating_attendance" id="r4_4" value="4"><label for="r4_4"><div class="rb">4</div><div class="rl">Good</div></label>
+            <input type="radio" name="rating_attendance" id="r4_5" value="5"><label for="r4_5"><div class="rb">5</div><div class="rl">Excellent</div></label>
+          </div>
+          <div class="ri-error" id="err_rating_attendance">⚠ Please select a rating.</div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="rating-item" id="ri_5">
+          <div class="rq-text">
+            <div class="rq-si">කණ්ඩායම සමඟ සහයෝගයෙන් වැඩ කිරීමට සහ නව උපදෙස් පිළිපැදීමට ඇති කැමැත්ත <span class="req">*</span></div>
+            <div class="rq-en">Willingness to cooperate with the team and follow new instructions</div>
+          </div>
+          <div class="rating-buttons">
+            <input type="radio" name="rating_teamwork" id="r5_1" value="1"><label for="r5_1"><div class="rb">1</div><div class="rl">Very Poor</div></label>
+            <input type="radio" name="rating_teamwork" id="r5_2" value="2"><label for="r5_2"><div class="rb">2</div><div class="rl">Poor</div></label>
+            <input type="radio" name="rating_teamwork" id="r5_3" value="3"><label for="r5_3"><div class="rb">3</div><div class="rl">Average</div></label>
+            <input type="radio" name="rating_teamwork" id="r5_4" value="4"><label for="r5_4"><div class="rb">4</div><div class="rl">Good</div></label>
+            <input type="radio" name="rating_teamwork" id="r5_5" value="5"><label for="r5_5"><div class="rb">5</div><div class="rl">Excellent</div></label>
+          </div>
+          <div class="ri-error" id="err_rating_teamwork">⚠ Please select a rating.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-section">
+      <div class="submit-info">
+        <strong>Ready to submit?</strong>
+        <p>Please verify all information is accurate. This review will be permanently saved to the HR records system and synced to Google Sheets.</p>
+      </div>
+      <button type="button" class="btn-submit" onclick="submitForm()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"/>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+        </svg>
+        Submit Review
+      </button>
+    </div>
+
+  </div><!-- /page-wrap -->
+
+  <!-- Camera Modal -->
+  <div class="modal-overlay" id="camera-modal">
+    <div class="modal">
+      <div class="modal-title">Capture Employee Photo</div>
+      <video id="camera-feed" autoplay playsinline></video>
+      <canvas id="snap-canvas"></canvas>
+      <div class="modal-btns">
+        <button type="button" class="btn-snap" onclick="snapPhoto()">
+          📷 &nbsp;Capture Photo
+        </button>
+        <button type="button" class="btn-modal-cancel" onclick="closeCamera()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  /* ── Date & live clock ── */
+  document.getElementById('hdr-date').textContent = new Date().toLocaleDateString('en-GB', {
+    weekday: 'short', day: 'numeric', month: 'long', year: 'numeric'
+  });
+  function tickClock() {
+    const now  = new Date();
+    const hh   = String(now.getHours()).padStart(2, '0');
+    const mm   = String(now.getMinutes()).padStart(2, '0');
+    const ss   = String(now.getSeconds()).padStart(2, '0');
+    document.getElementById('hdr-time').textContent = `${hh}:${mm}:${ss}`;
+  }
+  tickClock();
+  setInterval(tickClock, 1000);
+
+  /* ═══════════════════════════════════════════════
+     EMPLOYEE DATASET (from Excel)
+  ═══════════════════════════════════════════════ */
+  const EMPLOYEES = [
+    {"epf":"23372","name":"A.V.U.SADARUWANI-UDESHIKA","line":"Line 10","skill":"C","date":"11/02/2026"},
+    {"epf":"23365","name":"W.A.J.S. WEHERAGODA-SITHARA","line":"Line 12","skill":"C","date":"05/02/2026"},
+    {"epf":"23356","name":"H.M.M.D.HERATH-MILANI","line":"Line 12","skill":"B","date":"02/02/2026"},
+    {"epf":"23360","name":"P.NIROSHANI-NIROSHANI","line":"Line 14","skill":"C","date":"03/02/2026"},
+    {"epf":"23398","name":"D.D.D.G.WEERASINGHE-GAYANTHIKA","line":"Line 14","skill":"A Star","date":"06/03/2026"},
+    {"epf":"23369","name":"K.S.D.KAPUGE-DILSHANI","line":"Line 15","skill":"C","date":"09/02/2026"},
+    {"epf":"23404","name":"M.S.KUMARI-KUMARI","line":"Line 15","skill":"A","date":"10/03/2026"},
+    {"epf":"23358","name":"M.D.K.RATHNASIRI-DINITHI","line":"Line 16","skill":"C","date":"03/02/2026"},
+    {"epf":"23377","name":"J.D.MERY-MERY","line":"Line 16","skill":"C","date":"17/02/2026"},
+    {"epf":"23395","name":"W.A.C.U.WICKRAMASINGHE-UDENI","line":"Line 16","skill":"B","date":"05/03/2026"},
+    {"epf":"23403","name":"A.G.P.MAHESHIKA-PIYUMI","line":"Line 16","skill":"B","date":"07/03/2026"},
+    {"epf":"23407","name":"L.A.C.JAYAWEERA-CHANDRAWATHI","line":"Line 17","skill":"C","date":"16/03/2026"},
+    {"epf":"23371","name":"M.M.B.WASANTHI-BHAGYA","line":"Line 17","skill":"C","date":"10/02/2026"},
+    {"epf":"23382","name":"R.P.C.P.RAJAPAKSHA-CHALANI","line":"Line 18","skill":"C","date":"20/02/2026"},
+    {"epf":"23381","name":"U.R.D.S.AMARASINGHE-SAMANTHIKA","line":"Line 19","skill":"C","date":"19/02/2026"},
+    {"epf":"23359","name":"J.D.DANARAJA-DANARAJA","line":"Line 19","skill":"C","date":"03/02/2026"},
+    {"epf":"23376","name":"H.P.N.DHARMASENA-NIRMA","line":"Line 19","skill":"C","date":"17/02/2026"},
+    {"epf":"23370","name":"M.S.DEVI-DEVI","line":"Line 19","skill":"A","date":"10/02/2026"},
+    {"epf":"23373","name":"W.G.S.D.KUMARI-DEEPIKA","line":"Line 20","skill":"B","date":"12/02/2026"},
+    {"epf":"23375","name":"C.DIVIA-DIVIA","line":"Line 21","skill":"C","date":"17/02/2026"},
+    {"epf":"23366","name":"H.G.T.S.SOMARATHNA-SANDAMALI","line":"Line 21","skill":"A","date":"05/02/2026"},
+    {"epf":"23388","name":"S.L.N.MADUWANTHI-NISHANI","line":"Line 22","skill":"B","date":"26/02/2026"}
+  ];
+
+  /* Index by EPF for O(1) lookup */
+  const EPF_MAP = Object.fromEntries(EMPLOYEES.map(e => [e.epf, e]));
+
+  /* State: was last EPF input matched to a record? */
+  window._epfMatched = false;
+  let _suggestionIdx = -1;
+
+  /* ── Autofill helpers ── */
+  function fillEmployee(rec) {
+    const fields = ['emp_name','emp_team','emp_skill','emp_appdate'];
+    const values = [rec.name, rec.line, rec.skill, rec.date];
+    fields.forEach((id, i) => {
+      const el = document.getElementById(id);
+      el.value = values[i];
+      el.classList.add('autofilled');
+      el.readOnly = true;
+    });
+    ['name','team','skill','appdate'].forEach(k => {
+      document.getElementById('badge-' + k).style.display = 'inline-flex';
+    });
+    document.getElementById('epf-notfound').style.display = 'none';
+    window._epfMatched = true;
+    updateSteps();
+  }
+
+  function clearAutofill() {
+    ['emp_name','emp_team','emp_skill','emp_appdate'].forEach(id => {
+      const el = document.getElementById(id);
+      el.value = '';
+      el.classList.remove('autofilled', 'invalid');
+    });
+    ['name','team','skill','appdate'].forEach(k => {
+      document.getElementById('badge-' + k).style.display = 'none';
+    });
+    window._epfMatched = false;
+    updateSteps();
+  }
+
+  /* ── Suggestion dropdown ── */
+  function renderSuggestions(matches) {
+    const box = document.getElementById('epf-suggestions');
+    if (!matches.length) { box.style.display = 'none'; return; }
+    box.innerHTML = matches.map((e, i) => `
+      <div class="epf-suggestion-item" data-epf="${e.epf}" data-idx="${i}"
+           onmousedown="selectSuggestion('${e.epf}')">
+        <span class="epf-sug-epf">${e.epf}</span>
+        <span class="epf-sug-name">${e.name}</span>
+        <span class="epf-sug-line">${e.line}</span>
+      </div>`).join('');
+    box.style.display = 'block';
+    _suggestionIdx = -1;
+  }
+
+  function hideSuggestions() {
+    document.getElementById('epf-suggestions').style.display = 'none';
+    _suggestionIdx = -1;
+  }
+
+  function selectSuggestion(epf) {
+    document.getElementById('epf_number').value = epf;
+    hideSuggestions();
+    const rec = EPF_MAP[epf];
+    if (rec) {
+      fillEmployee(rec);
+      document.getElementById('epf-notfound').style.display = 'none';
+      document.getElementById('epf_number').classList.remove('invalid');
+    }
+  }
+
+  /* ── EPF input handler ── */
+  function onEpfInput(val) {
+    const q = val.trim();
+    clearAutofill();
+    document.getElementById('epf-notfound').style.display = 'none';
+    document.getElementById('epf_number').classList.remove('invalid');
+
+    if (!q) { hideSuggestions(); return; }
+
+    // Exact match — autofill immediately
+    if (EPF_MAP[q]) {
+      fillEmployee(EPF_MAP[q]);
+      hideSuggestions();
+      return;
+    }
+
+    // Partial match — show suggestions
+    const matches = EMPLOYEES.filter(e => e.epf.startsWith(q) || e.name.toUpperCase().includes(q.toUpperCase()));
+    if (matches.length) {
+      renderSuggestions(matches.slice(0, 8));
+    } else {
+      hideSuggestions();
+      if (q.length >= 4) {
+        document.getElementById('epf-notfound').style.display = 'block';
+      }
+    }
+  }
+
+  /* ── Keyboard navigation in dropdown ── */
+  function onEpfKeydown(e) {
+    const box = document.getElementById('epf-suggestions');
+    const items = box.querySelectorAll('.epf-suggestion-item');
+    if (!items.length || box.style.display === 'none') return;
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      _suggestionIdx = Math.min(_suggestionIdx + 1, items.length - 1);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      _suggestionIdx = Math.max(_suggestionIdx - 1, 0);
+    } else if (e.key === 'Enter' && _suggestionIdx >= 0) {
+      e.preventDefault();
+      selectSuggestion(items[_suggestionIdx].dataset.epf);
+      return;
+    } else if (e.key === 'Escape') {
+      hideSuggestions(); return;
+    } else { return; }
+    items.forEach((el, i) => el.classList.toggle('active', i === _suggestionIdx));
+  }
+
+  /* Hide dropdown when clicking elsewhere */
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.epf-wrap')) hideSuggestions();
+  });
+
+  /* ── Step tracker (updates visually as user fills form) ── */
+  function updateSteps() {
+    const steps = document.querySelectorAll('.step');
+    const n1 = document.getElementById('emp_name').value.trim();
+    const t1 = document.getElementById('emp_team').value.trim();
+    const e1 = document.getElementById('epf_number').value.trim();
+    const infoOk    = n1 && t1 && e1 && !isNaN(Number(e1));
+    const photoOk   = !!window._photoData;   // optional — doesn't block progress
+    const ratingsOk = ['rating_sewing','rating_targets','rating_quality','rating_attendance','rating_teamwork']
+      .every(n => document.querySelector(`input[name="${n}"]:checked`));
+
+    steps[0].className = 'step ' + (infoOk ? 'done' : 'active');
+    // Step 2 (Photo): done if photo captured, active if info done, otherwise pending
+    steps[1].className = 'step ' + (photoOk ? 'done' : infoOk ? 'active' : '');
+    // Step 3 unlocks once info is filled — photo is NOT required to proceed
+    steps[2].className = 'step ' + (infoOk && ratingsOk ? 'done' : infoOk ? 'active' : '');
+    steps[3].className = 'step ' + (infoOk && ratingsOk ? 'active' : '');
+  }
+  document.querySelectorAll('input,select').forEach(el => el.addEventListener('change', updateSteps));
+  document.querySelectorAll('input[type="text"],input[type="number"]').forEach(el => el.addEventListener('input', updateSteps));
+
+  /* ── Camera ── */
+  let stream = null;
+
+  async function openCamera() {
+    const modal = document.getElementById('camera-modal');
+    const video = document.getElementById('camera-feed');
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+      video.srcObject = stream;
+      modal.classList.add('open');
+    } catch (e) {
+      alert('Camera access denied or not available. Please use the Upload option instead.');
+    }
+  }
+
+  function closeCamera() {
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    document.getElementById('camera-modal').classList.remove('open');
+  }
+
+  function snapPhoto() {
+    const video  = document.getElementById('camera-feed');
+    const canvas = document.getElementById('snap-canvas');
+    canvas.width  = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    setPhoto(canvas.toDataURL('image/jpeg', 0.85));
+    closeCamera();
+  }
+
+  function handleUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => setPhoto(ev.target.result);
+    reader.readAsDataURL(file);
+  }
+
+  function setPhoto(dataUrl) {
+    const img     = document.getElementById('photo-img');
+    const content = document.getElementById('photo-zone-content');
+    const zone    = document.getElementById('photo-zone');
+    img.src = dataUrl;
+    img.style.display    = 'block';
+    content.style.display = 'none';
+    zone.classList.add('has-photo');
+    window._photoData = dataUrl;
+    updateSteps();
+  }
+
+  /* ── Validation ── */
+  function setFieldError(id, show) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = show ? 'flex' : 'none';
+  }
+
+  function validate() {
+    let ok = true;
+
+    // emp_name and emp_team are auto-filled — just confirm they have values
+    ['emp_name', 'emp_team'].forEach(id => {
+      const el    = document.getElementById(id);
+      const empty = !el.value.trim();
+      el.classList.toggle('invalid', empty);
+      setFieldError('err_' + id, empty);
+      if (empty) ok = false;
+    });
+
+    // EPF must be a matched record (window._epfMatched set by autofill)
+    const epf    = document.getElementById('epf_number');
+    const epfBad = !epf.value.trim() || !window._epfMatched;
+    epf.classList.toggle('invalid', epfBad);
+    setFieldError('err_epf_number', epfBad);
+    if (epfBad) ok = false;
+
+    ['rating_sewing','rating_targets','rating_quality','rating_attendance','rating_teamwork']
+      .forEach((name, i) => {
+        const sel = document.querySelector(`input[name="${name}"]:checked`);
+        const ri  = document.getElementById('ri_' + (i + 1));
+        const err = document.getElementById('err_' + name);
+        ri.classList.toggle('invalid', !sel);
+        if (err) err.style.display = sel ? 'none' : 'block';
+        if (!sel) ok = false;
+      });
+
+    return ok;
+  }
+
+  /* ══════════════════════════════════════════════════════════════════
+     SUBMIT CONFIGURATION
+     ────────────────────────────────────────────────────────────────
+     Replace the URL below with your own deployed Web App URL after
+     following the setup instructions in SETUP_INSTRUCTIONS.md.
+     ══════════════════════════════════════════════════════════════════ */
+  const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzUknyjyBg9it74eYep0YA3Rs1XNM0GDsUqWGZFWbOoZy4eXgOurj_AFyLuQcSqsm760Q/exec';
+  //                       ↑ Paste your Web App URL here
+
+  /* ── Internal helpers ─────────────────────────────────────────── */
+
+  /** Shows or hides an inline error toast above the submit button. */
+  function showSubmitError(message) {
+    let toast = document.getElementById('submit-error-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'submit-error-toast';
+      toast.style.cssText = [
+        'background:#fef2f2',
+        'border:1.5px solid #dc2626',
+        'border-radius:8px',
+        'color:#dc2626',
+        'font-size:13px',
+        'font-weight:600',
+        'padding:12px 16px',
+        'margin-bottom:12px',
+        'display:flex',
+        'align-items:center',
+        'gap:8px',
+      ].join(';');
+      // Insert just before the submit section
+      const submitSection = document.querySelector('.submit-section');
+      submitSection.parentNode.insertBefore(toast, submitSection);
+    }
+    toast.innerHTML = `
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+           stroke-width="2.2" stroke-linecap="round" style="flex-shrink:0">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      ${message}`;
+    toast.style.display = 'flex';
+    toast.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function hideSubmitError() {
+    const toast = document.getElementById('submit-error-toast');
+    if (toast) toast.style.display = 'none';
+  }
+
+  /** Resets the submit button back to its default ready state. */
+  function resetSubmitButton(btn) {
+    btn.disabled = false;
+    btn.style.background = '';
+    btn.style.boxShadow  = '';
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"/>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+      Submit Review`;
+  }
+
+  /* ── Submit ────────────────────────────────────────────────────── */
+
+  async function submitForm() {
+
+    // ── 1. Client-side validation ─────────────────────────────────
+    hideSubmitError();
+    if (!validate()) {
+      document.querySelector('.invalid')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    // ── 2. Guard: ensure the URL has been replaced ────────────────
+    if (!GAS_WEB_APP_URL || GAS_WEB_APP_URL.includes('YOUR_DEPLOYMENT_ID')) {
+      showSubmitError('Web App URL is not configured. Please follow the setup instructions.');
+      return;
+    }
+
+    // ── 3. Build payload ──────────────────────────────────────────
+    const payload = {
+      timestamp       : new Date().toISOString(),
+      employeeName    : document.getElementById('emp_name').value.trim(),
+      employeeTeam    : document.getElementById('emp_team').value.trim(),
+      epfNumber       : document.getElementById('epf_number').value.trim(),
+      skill           : document.getElementById('emp_skill').value.trim(),
+      appointmentDate : document.getElementById('emp_appdate').value.trim(),
+      // Photo is flagged server-side but not stored in the sheet (base64 is too large for Sheets)
+      photo           : window._photoData ? '[photo attached]' : null,
+      ratings: {
+        sewingOperations : Number(document.querySelector('input[name="rating_sewing"]:checked').value),
+        hourlyTargets    : Number(document.querySelector('input[name="rating_targets"]:checked').value),
+        qualityDefects   : Number(document.querySelector('input[name="rating_quality"]:checked').value),
+        attendance       : Number(document.querySelector('input[name="rating_attendance"]:checked').value),
+        teamwork         : Number(document.querySelector('input[name="rating_teamwork"]:checked').value),
+      },
+    };
+
+    console.log('📋 Submitting payload:', payload);
+
+    // ── 4. Set loading state ──────────────────────────────────────
+    const btn = document.querySelector('.btn-submit');
+    btn.disabled = true;
+    btn.innerHTML = `
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.2"
+           style="animation:spin 1s linear infinite">
+        <circle cx="12" cy="12" r="10" stroke-opacity=".3"/>
+        <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/>
+      </svg>
+      Submitting…`;
+
+    if (!document.getElementById('spin-style')) {
+      const s = document.createElement('style');
+      s.id = 'spin-style';
+      s.textContent = '@keyframes spin{to{transform:rotate(360deg)}}';
+      document.head.appendChild(s);
+    }
+
+    // ── 5. POST to Apps Script ────────────────────────────────────
+    //
+    //  ⚠️  WHY NO "mode: no-cors" HERE?
+    //  Using no-cors produces an *opaque* response — the browser
+    //  gives you a Response object with status 0 and empty body,
+    //  so you can never tell if the save succeeded or failed.
+    //
+    //  Instead, Code.gs returns Content-Type: application/json and
+    //  Apps Script handles CORS automatically for deployed Web Apps
+    //  (no custom headers needed on either side).
+    // ─────────────────────────────────────────────────────────────
+    try {
+      const response = await fetch(GAS_WEB_APP_URL, {
+        method  : 'POST',
+        // ✅  "cors" (default) — lets us read the JSON response body
+        headers : { 'Content-Type': 'text/plain;charset=utf-8' },
+        // NOTE: Apps Script Web Apps do NOT support pre-flight OPTIONS
+        // requests, so we use Content-Type: text/plain to avoid a
+        // pre-flight while still sending valid JSON in the body.
+        body    : JSON.stringify(payload),
+      });
+
+      // ── 6. Parse the JSON response from Code.gs ───────────────
+      let result;
+      try {
+        result = await response.json();
+      } catch (_) {
+        throw new Error('The server returned a non-JSON response. Check that the Web App URL is correct and the script is deployed as a Web App.');
+      }
+
+      // ── 7. Handle server-side errors reported in the JSON ─────
+      if (!result.success) {
+        const detail = result.details ? result.details.join(' ') : (result.error || 'Unknown server error.');
+        throw new Error(detail);
+      }
+
+      // ── 8. Success path ───────────────────────────────────────
+      // Persist a local backup (best-effort; ignore if storage is blocked)
+      try { localStorage.setItem('review_' + Date.now(), JSON.stringify(payload)); } catch (_) {}
+
+      // Populate the thank-you screen using server-confirmed values
+      const r   = payload.ratings;
+      const avg = ((r.sewingOperations + r.hourlyTargets + r.qualityDefects + r.attendance + r.teamwork) / 5).toFixed(1);
+
+      document.getElementById('ty-stat-name').textContent  = payload.employeeName.split(' ')[0];
+      document.getElementById('ty-stat-score').textContent = avg + ' / 5';
+      document.getElementById('ty-timestamp').textContent  = new Date().toLocaleString('en-GB', {
+        day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
+      });
+
+      document.getElementById('success-banner').style.display = 'block';
+      document.getElementById('success-banner').scrollIntoView({ behavior: 'smooth' });
+      document.querySelectorAll('.card, .submit-section, .steps-bar, .req-note')
+        .forEach(c => c.style.display = 'none');
+
+      launchConfetti();
+
+    } catch (err) {
+      // ── 9. Error path — show user-friendly message ────────────
+      console.error('Submission error:', err);
+
+      const userMessage = err.message || 'Submission failed. Please check your connection and try again.';
+      showSubmitError(userMessage);
+
+      // Reset button to a red "retry" state, then restore after 4 s
+      btn.disabled = false;
+      btn.style.background = 'linear-gradient(135deg,#dc2626,#b91c1c)';
+      btn.style.boxShadow  = '0 4px 18px rgba(220,38,38,.45)';
+      btn.innerHTML = `
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor"
+             stroke-width="2.2" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10"/>
+          <line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        Failed — Tap to Retry`;
+
+      setTimeout(() => resetSubmitButton(btn), 4000);
+    }
+  }  /* ═══════════════════════════════════════════════
+     CONFETTI ENGINE
+  ═══════════════════════════════════════════════ */
+  function launchConfetti() {
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx    = canvas.getContext('2d');
+    canvas.width  = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    const colors = ['#2563eb','#0891b2','#15803d','#f59e0b','#ec4899','#8b5cf6','#10b981'];
+    const pieces = Array.from({ length: 120 }, () => ({
+      x:    Math.random() * canvas.width,
+      y:    -10 - Math.random() * 100,
+      w:    6 + Math.random() * 8,
+      h:    10 + Math.random() * 6,
+      r:    Math.random() * Math.PI * 2,
+      dr:   (Math.random() - .5) * .18,
+      dx:   (Math.random() - .5) * 3,
+      dy:   2.5 + Math.random() * 3.5,
+      col:  colors[Math.floor(Math.random() * colors.length)],
+      life: 1,
+    }));
+
+    let raf;
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let alive = false;
+      pieces.forEach(p => {
+        p.x  += p.dx;
+        p.y  += p.dy;
+        p.r  += p.dr;
+        p.dy += .04;           // gravity
+        if (p.y < canvas.height + 20) alive = true;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.r);
+        ctx.globalAlpha = Math.max(0, 1 - p.y / canvas.height);
+        ctx.fillStyle = p.col;
+        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.restore();
+      });
+      if (alive) raf = requestAnimationFrame(draw);
+      else ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    cancelAnimationFrame(raf);
+    draw();
+  }
+
+  /* ── Reset form for a new review ── */
+  function resetForm() {
+    /* Clear all inputs */
+    document.querySelectorAll('input[type="text"], input[type="number"]').forEach(el => {
+      el.value = '';
+      el.classList.remove('invalid', 'autofilled');
+      el.readOnly = false;
+    });
+    /* Clear radios */
+    document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+    /* Reset autofill state */
+    window._epfMatched = false;
+    /* Hide autofill badges */
+    document.querySelectorAll('.autofill-badge').forEach(b => b.style.display = 'none');
+    document.getElementById('epf-notfound').style.display = 'none';
+    document.getElementById('epf-suggestions').style.display = 'none';
+    /* Re-lock readonly fields (they're always readonly — cleared above) */
+    ['emp_name','emp_team','emp_skill','emp_appdate'].forEach(id => {
+      document.getElementById(id).readOnly = true;
+    });
+    /* Clear photo */
+    window._photoData = null;
+    const img = document.getElementById('photo-img');
+    img.src = '';
+    img.style.display = 'none';
+    document.getElementById('photo-placeholder').style.display = 'flex';
+    document.getElementById('photo-zone').classList.remove('has-photo');
+    document.getElementById('photo-zone-content').style.display = '';
+    /* Hide all error states */
+    document.querySelectorAll('.field-error, .ri-error').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.rating-item').forEach(el => el.classList.remove('invalid'));
+    /* Restore form, hide success */
+    document.getElementById('success-banner').style.display = 'none';
+    document.querySelectorAll('.card, .submit-section, .steps-bar, .req-note').forEach(c => c.style.display = '');
+    updateSteps();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
